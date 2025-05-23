@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base href="/flutterweb/">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="Kahraman Benim - Çocuklar için interaktif hikaye uygulaması">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Kahraman Benim">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png"/>
+  <title>🌟 Kahraman Benim 🌟</title>
+  <link rel="manifest" href="manifest.json">
+  
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      overflow: hidden;
+    }
+    
+    .loading-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      z-index: 9999;
+    }
+    
+    .loading-text {
+      color: white;
+      font-size: 24px;
+      margin-bottom: 20px;
+      text-align: center;
+      animation: bounce 2s infinite;
+    }
+    
+    .loading-emoji {
+      font-size: 60px;
+      animation: spin 2s linear infinite;
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+    
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .progress-bar {
+      width: 200px;
+      height: 10px;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-top: 20px;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff9a56, #ff6b6b);
+      width: 0%;
+      animation: loading 3s ease-in-out infinite;
+    }
+    
+    @keyframes loading {
+      0% { width: 0%; }
+      50% { width: 70%; }
+      100% { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Yüklenme ekranı -->
+  <div id="loading" class="loading-container">
+    <div class="loading-emoji">🌟</div>
+    <div class="loading-text">
+      Hikayeler yükleniyor...<br>
+      <small>Macera başlamak üzere!</small>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Flutter uygulaması burada yüklenecek -->
+  <div id="flutter-container"></div>
+
+  <script>
+    // Flutter yüklendikten sonra loading ekranını gizle
+    window.addEventListener('flutter-initialized', function() {
+      document.getElementById('loading').style.display = 'none';
+    });
+
+    // 5 saniye sonra loading ekranını otomatik gizle
+    setTimeout(() => {
+      document.getElementById('loading').style.display = 'none';
+    }, 5000);
+  </script>
+
+  <script>
+    var serviceWorkerVersion = null;
+    var scriptLoaded = false;
+    
+    function loadMainDartJs() {
+      if (scriptLoaded) {
+        return;
+      }
+      scriptLoaded = true;
+      var scriptTag = document.createElement('script');
+      scriptTag.src = 'main.dart.js';
+      scriptTag.type = 'application/javascript';
+      document.body.append(scriptTag);
+    }
+
+    if ('serviceWorker' in navigator) {
+      // Service workers destekleniyor
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('flutter_service_worker.js?v=' + serviceWorkerVersion)
+          .then((reg) => {
+            console.log('SW registered: ', reg);
+          }).catch((err) => {
+            console.log('SW registration failed: ', err);
+          });
+      });
+    }
+    
+    loadMainDartJs();
+  </script>
+</body>
+</html>
